@@ -1,26 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate,  } from 'react-router-dom';
+import { AuthProvider } from './components/organisms/AuthProvider/AuthProvider';
+import { ProtectedRoute } from './components/organisms/ProtectedRoute/ProtectedRoute';
+import SignUp from './components/templates/SignUp/SignUp';
+import SignIn from './components/templates/SignIn/SignIn';
+import Home from './components/templates/Home/Home';
 
-function App() {
+
+
+const App: React.FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AuthProvider>
+      <Router>
+        <div className="min-h-screen bg-gray-100">
+          <Routes>
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/signin" element={<SignIn />} />
+            <Route
+              path="/app"
+              element={
+                <ProtectedRoute>
+                  <Home />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/" element={<Navigate to="/signin" replace />} />
+          </Routes>
+        </div>
+      </Router>
+    </AuthProvider>
   );
-}
+};
 
 export default App;

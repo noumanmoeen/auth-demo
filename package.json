@@ -25,7 +25,7 @@
     "eject": "react-scripts eject",
     "start:server": "cd auth-backend && npm run start:dev",
     "start:dev": "concurrently  \"npm run start\" \"npm run start:server\" ",
-    "install:all": "npm install && npm run install && npm run install:auth-backend",
+    "install:all": "npm install && npm run install && npm run install:server",
     "install:client": "npm install",
     "install:server": "cd auth-backend && npm install"
   },

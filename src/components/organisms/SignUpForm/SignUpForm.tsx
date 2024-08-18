@@ -54,7 +54,7 @@ const SignUpForm: React.FC = () => {
       minLength: password.length >= 8,
       hasLetter: /[a-zA-Z]/.test(password),
       hasNumber: /\d/.test(password),
-      hasSpecial: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+      hasSpecial: /[!@#$%^&*(),.?":{}|<>_]/.test(password),
     });
   }, [password]);
 

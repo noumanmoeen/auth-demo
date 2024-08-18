@@ -5,12 +5,14 @@ import { ProtectedRoute } from './components/organisms/ProtectedRoute/ProtectedR
 import SignUp from './components/templates/SignUp/SignUp';
 import SignIn from './components/templates/SignIn/SignIn';
 import Home from './components/templates/Home/Home';
-
+import { ToastContainer  } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const App: React.FC = () => {
   return (
     <AuthProvider>
+      <ToastContainer />
       <Router>
         <div className="min-h-screen bg-gray-100">
           <Routes>

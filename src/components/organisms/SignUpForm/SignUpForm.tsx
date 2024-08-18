@@ -40,7 +40,7 @@ const SignUpForm: React.FC = () => {
       const response = await signUpHandler({ email, password, name });
       console.log("Sign-Up successful", response);
       notify("You've been succesfully registered" ,"success")
-      signIn();
+      signIn(response.token);
       navigate("/app");
     } catch (err: any) {
       setError(err.message);

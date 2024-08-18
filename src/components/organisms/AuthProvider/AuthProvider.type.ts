@@ -1,6 +1,6 @@
 export interface AuthContextType {
     isAuthenticated: boolean;
-    signIn: () => void;
+    signIn: (token :string ) => void;
     signOut: () => void;
   }
   

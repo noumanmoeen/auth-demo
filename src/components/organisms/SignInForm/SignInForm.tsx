@@ -20,7 +20,7 @@ const SignInForm: React.FC = () => {
       const response = await signInHandler({ email, password });
       console.log("Sign-in successful", response);
       notify("You've been succesfully logged in" ,"success")
-      signIn();
+      signIn(response.token);
       const origin = location.state?.from?.pathname || "/app";
       navigate(origin);
     } catch (err : any) {

@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3001'; // Adjust this to match your backend URL
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL; // Adjust this to match your backend URL
 
 interface SignUpData {
   email: string;

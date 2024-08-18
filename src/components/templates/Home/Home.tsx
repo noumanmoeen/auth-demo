@@ -1,12 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../organisms/AuthProvider/AuthProvider";
+import { notify } from "../../../utils/notify";
 
 const Home: React.FC = () => {
 
     const { signOut } = useAuth();
     const navigate = useNavigate();
   
-    const handleSignOut = () => {
+    const handleSignOut = () => { 
+      notify("You've been logged out", 'info')
       signOut();
       navigate('/signin');
     };

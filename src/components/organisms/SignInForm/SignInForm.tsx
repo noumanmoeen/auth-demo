@@ -2,22 +2,31 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import Button from "../../atoms/Button/Button";
 import Input from "../../atoms/Input/Input";
 import { FormEvent, useState } from "react";
- import { useAuth } from "../AuthProvider/AuthProvider";
+import { useAuth } from "../AuthProvider/AuthProvider";
+import { signInHandler } from "../../../APIs/authApis";
+import { notify } from "../../../utils/notify";
 
 const SignInForm: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
   const navigate = useNavigate();
   const location = useLocation();
   const { signIn } = useAuth();
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
-    // Here you would typically validate the credentials with your backend
-    console.log("Sign in:", { email, password });
-    signIn();
-    const origin = location.state?.from?.pathname || '/app';
-    navigate(origin);
+    try {
+      const response = await signInHandler({ email, password });
+      console.log("Sign-in successful", response);
+      notify("You've been succesfully logged in" ,"success")
+      signIn();
+      const origin = location.state?.from?.pathname || "/app";
+      navigate(origin);
+    } catch (err : any) {
+      setError(err.message);
+      notify(err?.message ?? 'There was some problem logging in' ,"error")
+    }
   };
 
   return (
@@ -27,11 +36,10 @@ const SignInForm: React.FC = () => {
     >
       <h2 className="text-2xl font-bold mb-6 text-center">Sign In</h2>
       <div className="mb-4">
-        
         <Input
           label="Email"
           onChange={(val) => setEmail(val)}
-          placeholder="Enter email"
+          placeholder="Enter Email"
           required
           value={email}
           type="text"
@@ -41,7 +49,7 @@ const SignInForm: React.FC = () => {
         <Input
           label="Password"
           onChange={(val) => setPassword(val)}
-          placeholder="******************"
+          placeholder="Enter Password"
           required
           value={password}
           type="password"

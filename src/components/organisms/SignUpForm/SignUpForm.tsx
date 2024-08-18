@@ -5,50 +5,58 @@ import Input from "../../atoms/Input/Input";
 import Button from "../../atoms/Button/Button";
 import { PasswordStrength } from "./SignUpForm.type";
 import { validateEmail } from "../../../utils/helpers";
+import { signUpHandler } from "../../../APIs/authApis";
+import { notify } from "../../../utils/notify";
 
 const SignUpForm: React.FC = () => {
+  const [email, setEmail] = useState<string>("");
+  const [name, setName] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const [passwordStrength, setPasswordStrength] = useState<PasswordStrength>({
+    minLength: false,
+    hasLetter: false,
+    hasNumber: false,
+    hasSpecial: false,
+  });
+  const navigate = useNavigate();
+  const { signIn } = useAuth();
 
-    const [email, setEmail] = useState<string>("");
-    const [name, setName] = useState<string>("");
-    const [password, setPassword] = useState<string>("");
-    const [error, setError] = useState<string>("");
-    const [passwordStrength, setPasswordStrength] = useState<PasswordStrength>({
-        minLength: false,
-        hasLetter: false,
-        hasNumber: false,
-        hasSpecial: false,
-      });
-    const navigate = useNavigate();
-    const { signIn } = useAuth();
-  
-    const validatePassword = (password: string): boolean => {
-        return Object.values(passwordStrength).every(Boolean);
-      };
-  
-    const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
-      e.preventDefault();
-      if (!validateEmail(email)) {
-        setError('Please enter a valid email address');
-        return;
-      }
-      if (!validatePassword(password)) {
-        setError("Password does not meet requirements");
-        return;
-      }
-      console.log("Sign up:", { email, name, password });
+  const validatePassword = (password: string): boolean => {
+    return Object.values(passwordStrength).every(Boolean);
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+    e.preventDefault();
+    if (!validateEmail(email)) {
+      setError("Please enter a valid email address");
+      return;
+    }
+    if (!validatePassword(password)) {
+      setError("Password does not meet requirements");
+      return;
+    }
+    try {
+      const response = await signUpHandler({ email, password, name });
+      console.log("Sign-Up successful", response);
+      notify("You've been succesfully registered" ,"success")
       signIn();
       navigate("/app");
-    };
-  
+    } catch (err: any) {
+      setError(err.message);
+      notify(err?.message ?? 'There was some problem registering' ,"error")
 
-    useEffect(() => {
-        setPasswordStrength({
-          minLength: password.length >= 8,
-          hasLetter: /[a-zA-Z]/.test(password),
-          hasNumber: /\d/.test(password),
-          hasSpecial: /[!@#$%^&*(),.?":{}|<>]/.test(password),
-        });
-      }, [password]);
+    }
+  };
+
+  useEffect(() => {
+    setPasswordStrength({
+      minLength: password.length >= 8,
+      hasLetter: /[a-zA-Z]/.test(password),
+      hasNumber: /\d/.test(password),
+      hasSpecial: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+    });
+  }, [password]);
 
   return (
     <>
@@ -61,7 +69,7 @@ const SignUpForm: React.FC = () => {
           <Input
             label="Email"
             onChange={(val) => setEmail(val)}
-            placeholder="Enter email"
+            placeholder="Enter Email"
             required
             value={email}
             type="text"
@@ -71,7 +79,7 @@ const SignUpForm: React.FC = () => {
           <Input
             label="Name"
             onChange={(val) => setName(val)}
-            placeholder="Enter name"
+            placeholder="Enter Name"
             required
             value={name}
             type="text"
@@ -81,28 +89,44 @@ const SignUpForm: React.FC = () => {
           <Input
             label="Password"
             onChange={(val) => setPassword(val)}
-            placeholder="******************"
+            placeholder="Enter Password"
             required
             value={password}
             type="password"
           />
-           <div className="text-sm mb-3 mt-3">
-              <p className={passwordStrength.minLength ? "text-green-500" : "text-red-400"}>
-                { passwordStrength.minLength && '✓'} At least 8 characters long
-              </p>
-              <p className={passwordStrength.hasLetter ? "text-green-500" : "text-red-400"}>
-                {passwordStrength.hasLetter && '✓'} Contains at least 1 letter
-              </p>
-              <p className={passwordStrength.hasNumber ? "text-green-500" : "text-red-400"}>
-                {passwordStrength.hasNumber && '✓'} Contains at least 1 number
-              </p>
-              <p className={passwordStrength.hasSpecial ? "text-green-500" : "text-red-400"}>
-                { passwordStrength.hasSpecial && '✓'} Contains at least 1 special character
-              </p>
-            </div>
-        
+          <div className="text-sm mb-3 mt-3">
+            <p
+              className={
+                passwordStrength.minLength ? "text-green-500" : "text-red-400"
+              }
+            >
+              {passwordStrength.minLength && "✓"} At least 8 characters long
+            </p>
+            <p
+              className={
+                passwordStrength.hasLetter ? "text-green-500" : "text-red-400"
+              }
+            >
+              {passwordStrength.hasLetter && "✓"} Contains at least 1 letter
+            </p>
+            <p
+              className={
+                passwordStrength.hasNumber ? "text-green-500" : "text-red-400"
+              }
+            >
+              {passwordStrength.hasNumber && "✓"} Contains at least 1 number
+            </p>
+            <p
+              className={
+                passwordStrength.hasSpecial ? "text-green-500" : "text-red-400"
+              }
+            >
+              {passwordStrength.hasSpecial && "✓"} Contains at least 1 special
+              character
+            </p>
+          </div>
         </div>
-        {error && <p className="text-red-400 text-xs italic mb-4">{error}</p>}
+        {error && <p className="text-red-700 text-sm font-bold italic mb-4">{error}</p>}
         <div className="flex items-center justify-between">
           <Button title="Sign Up" />
           <Link
@@ -117,5 +141,4 @@ const SignUpForm: React.FC = () => {
   );
 };
 
-
-export default SignUpForm
+export default SignUpForm;
